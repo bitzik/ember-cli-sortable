@@ -21,8 +21,21 @@ export default Ember.CollectionView.extend({
       Logger.debug('what is that? ', callback);
     }, this);
 
-    const sortable = Sortable.create(element);
+    const sortable = Sortable.create(element, {
+      onEnd: (evt) => {
+        this._updateContent(evt.oldIndex, evt.newIndex);
+      }
+    });
     this.set('rubaxaSortable', sortable);
-  })
+  }),
+
+  _updateContent(oldIndex, newIndex) {
+    const content = this.get('content'),
+      item = content.objectAt(oldIndex);
+
+    content.removeAt(oldIndex);
+    content.insertAt(newIndex, item);
+  }
+
 
 });
