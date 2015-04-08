@@ -16,6 +16,16 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
+    },
+    contentSecurityPolicyHeader: 'Content-Security-Policy',
+    contentSecurityPolicy: {
+      'default-src': "'none'",
+      'script-src': "'self' https://cdnjs.cloudflare.com",
+      'font-src': "'self' https://fonts.gstatic.com/ data: https://cdnjs.cloudflare.com",
+      'connect-src': "'self'",
+      'img-src': "'self' data:",
+      'style-src': "'self' https://fonts.googleapis.com/ 'unsafe-inline' https://cdnjs.cloudflare.com",
+      'frame-src': "'self'"
     }
   };
 
@@ -25,6 +35,9 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
+    ENV.contentSecurityPolicy['script-src'] += " http://strong-fireball-28-211525.euw1.nitrousbox.com:8000 'unsafe-eval' 'unsafe-inline' ";
+    ENV.contentSecurityPolicy['connect-src'] += " ws://strong-fireball-28-211525.euw1.nitrousbox.com:8000 ";
+    ENV.contentSecurityPolicy['style-src'] += " 'unsafe-inline'";
   }
 
   if (environment === 'test') {
