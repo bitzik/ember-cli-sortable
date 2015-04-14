@@ -6,6 +6,9 @@ export default Ember.Controller.extend({
   firstList: Ember.A([
     "this", "is", "just", "a", "simple", "list"
   ]),
+  secondList: Ember.A([
+    'yma o yyyyy', 'what', 'the', 'heck', 'is', 'that', 'asdqwe'
+  ]),
 
   actions: {
     firstListMoved(item, oldIndex, newIndex) {

@@ -14,20 +14,48 @@ export default Ember.CollectionView.extend(Ember.TargetActionSupport, {
 
   tagName: 'ul',
 
+  handle: null,
+
+  //from ivy-sortable
+  arrayDidChangeAfterElementInserted: function() {
+    Ember.run.scheduleOnce('afterRender', this, this._refreshSortable);
+  },
+
+  //from ivy-sortable
+  arrayWillChangeAfterElementInserted: function() {
+  },
+
+  //from ivy-sortable
+  destroySortable: Ember.on('willDestroyElement', function() {
+    this._contentWillChangeAfterElementInserted();
+
+    Ember.removeBeforeObserver(this, 'content', this, this._contentWillChangeAfterElementInserted);
+    this.removeObserver('content', this, this._contentDidChangeAfterElementInserted);
+
+    this.$().sortable('destroy');
+  }),
+
+
   initRubaXaSortable: on('didInsertElement', function() {
     const element = this.$().get(0);
-    Logger.debug('didInsertElement, element is -> ', element);
-
-    EnumerableUtils.forEach(['start', 'stop'], function (callback) {
-      Logger.debug('what is that? ', callback);
-    }, this);
-
-    const sortable = Sortable.create(element, {
+    const opts = {
       onEnd: (evt) => {
         this._updateContent(evt.oldIndex, evt.newIndex);
       }
-    });
+    };
+
+    Logger.debug('didInsertElement, element is -> ', element);
+    Logger.debug('here the handle is : ', this.get('handle'));
+
+    const sortable = Sortable.create(element, opts);
     this.set('rubaxaSortable', sortable);
+
+    //Ember.EnumerableUtils.forEach(['setData','onStart','onEnd','onAdd','onUpdate','onSort','onRemove', 'onFilter'],
+    //  this._bindSortableOption, this);
+
+    //Ember.EnumerableUtils.forEach(['group', 'sort', 'disabled', 'store', 'animation', 'handle', 'filter', 'draggable', 'ghostClass', 'scroll', 'scrollSensitivity', 'scrollSpeed'],
+    Ember.EnumerableUtils.forEach(['disabled', 'handle', 'ghostClass'],
+      this._bindSortableOption, this);
   }),
 
   _updateContent(oldIndex, newIndex) {
@@ -78,5 +106,27 @@ export default Ember.CollectionView.extend(Ember.TargetActionSupport, {
   targetObject: computed('_parentView',function() {
     var parentView = this.get('_parentView');
     return parentView ? parentView.get('controller') : null;
-  })
+  }),
+
+
+  /**
+   * copied from ivy-sortable
+   * https://github.com/IvyApp/ivy-sortable/blob/master/addon/views/ivy-sortable.js
+   */
+  _bindSortableOption: function(key) {
+    this.addObserver(key, this, this._optionDidChange);
+
+    if (key in this) {
+      this._optionDidChange(this, key);
+    }
+
+    this.on('willDestroyElement', this, function() {
+      this.removeObserver(key, this, this._optionDidChange);
+    });
+  },
+
+  _optionDidChange: function(sender, key) {
+    this.get('rubaxaSortable').option(key, this.get(key));
+    Logger.debug('changedOption ', key, ' for ', this.get(key));
+  }
 });

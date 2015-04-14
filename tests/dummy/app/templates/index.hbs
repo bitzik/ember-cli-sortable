@@ -7,3 +7,9 @@
   {{item}}
 {{/each}}
 ]
+
+<hr/>
+
+{{#collection 'ember-sortable' content=secondList handle='.handle'}}
+  <span class="handle">++++</span> {{this}}
+{{/collection}}
