@@ -32,7 +32,7 @@ export default Ember.CollectionView.extend(Ember.TargetActionSupport, {
     Ember.removeBeforeObserver(this, 'content', this, this._contentWillChangeAfterElementInserted);
     this.removeObserver('content', this, this._contentDidChangeAfterElementInserted);
 
-    this.$().sortable('destroy');
+    this.get('rubaxaSortable').destroy();
   }),
 
 
