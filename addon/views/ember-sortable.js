@@ -125,8 +125,38 @@ export default Ember.CollectionView.extend(Ember.TargetActionSupport, {
     });
   },
 
+
+  _contentDidChangeAfterElementInserted: function() {
+    var content = this.get('content');
+
+    if (content) {
+      content.addArrayObserver(this, {
+        didChange: 'arrayDidChangeAfterElementInserted',
+        willChange: 'arrayWillChangeAfterElementInserted'
+      });
+    }
+
+    var len = content ? Ember.get(content, 'length') : 0;
+    this.arrayDidChangeAfterElementInserted(content, 0, null, len);
+  },
+
+  _contentWillChangeAfterElementInserted: function() {
+    var content = this.get('content');
+
+    if (content) {
+      content.removeArrayObserver(this, {
+        didChange: 'arrayDidChangeAfterElementInserted',
+        willChange: 'arrayWillChangeAfterElementInserted'
+      });
+    }
+
+    var len = content ? Ember.get(content, 'length') : 0;
+    this.arrayWillChangeAfterElementInserted(content, 0, len);
+  },
+
   _optionDidChange: function(sender, key) {
     this.get('rubaxaSortable').option(key, this.get(key));
     Logger.debug('changedOption ', key, ' for ', this.get(key));
   }
+
 });
