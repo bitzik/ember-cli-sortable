@@ -61,10 +61,13 @@ export default Ember.CollectionView.extend(Ember.TargetActionSupport, {
   _updateContent(oldIndex, newIndex) {
     const content = this.get('content'),
       item = content.objectAt(oldIndex);
-
-    content.removeAt(oldIndex);
-    content.insertAt(newIndex, item);
-    this.sendAction('moved', content, oldIndex, newIndex);
+    if (newIndex !== undefined && oldIndex !== undefined) {
+      content.removeAt(oldIndex);
+      content.insertAt(newIndex, item);
+      this.sendAction('moved', content, oldIndex, newIndex);
+    //} else {
+    //  Logger.info('prevented a undefined drag or drop');
+    }
   },
 
 
